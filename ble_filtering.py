@@ -157,9 +157,12 @@ def generate_other_packet(bytes):
     return other
 
 def get_bytes_from_line(line):
-    bytes = line.split()
-    bytes.pop(0)
-    return(bytes)
+    if (line):
+        bytes = line.split()
+        bytes.pop(0)
+        return(bytes)
+    else:
+        return 0
 
 def get_bytes_from_filter_str(filter_str):
     bytes = filter_str.split()
@@ -219,56 +222,63 @@ def print_custom(custom_calss):
 @click.option("-dt", "--device_type", help='Enter DEVICE TYPE separated by whitespace inside " "', is_flag=False)
 
 def filter(none, mac, uuid, major, minor, data, packet_type, device_type):
-    for line in sys.stdin:
-        bytes = get_bytes_from_line(line)
-        ibeacon = None
-        custom = None
-        other = None
+    line = ""
+    flag = False
+    for line_part in sys.stdin:
+        if (line_part[0] == ">"):
+            bytes = get_bytes_from_line(line)
+            ibeacon = None
+            custom = None
+            other = None
 
-        if not(none or mac or uuid or major or minor or data or packet_type or device_type):
-            print("No filter set!")
-            sys.exit(0)
+            if not (none or mac or uuid or major or minor or data or packet_type or device_type):
+                print("No filter set!")
+                sys.exit(0)
 
-        if (is_ibeacon(bytes)):
-            ibeacon = generate_ibeacon_packet(bytes)
-        elif (is_custom_device(bytes)):
-            custom = generate_custom_packet(bytes)
+            if (is_ibeacon(bytes)):
+                ibeacon = generate_ibeacon_packet(bytes)
+            elif (is_custom_device(bytes)):
+                custom = generate_custom_packet(bytes)
+            else:
+                other = generate_other_packet(bytes)
+
+            if (ibeacon):
+                if mac:
+                    if (filtering(ibeacon, MAC_ADDR, get_bytes_from_filter_str(mac))):
+                        print_ibeacon(ibeacon)
+                elif uuid:
+                    if (filtering(ibeacon, UUID, get_bytes_from_filter_str(uuid))):
+                        print_ibeacon(ibeacon)
+                elif major:
+                    if (filtering(ibeacon, MAJOR, get_bytes_from_filter_str(major))):
+                        print_ibeacon(ibeacon)
+                elif minor:
+                    if (filtering(ibeacon, MINOR, get_bytes_from_filter_str(minor))):
+                        print_ibeacon(ibeacon)
+                elif none:
+                    print_ibeacon(ibeacon)
+            elif (custom):
+                if mac:
+                    if (filtering(custom, MAC_ADDR, get_bytes_from_filter_str(mac))):
+                        print_custom(custom)
+                elif data:
+                    if (filtering(custom, DATA, get_bytes_from_filter_str(data))):
+                        print_custom(custom)
+                elif packet_type:
+                    if (filtering(custom, PACKET_TYPE, get_bytes_from_filter_str(packet_type))):
+                        print_custom(custom)
+                elif device_type:
+                    if (filtering(custom, DEVICE_TYPE, get_bytes_from_filter_str(device_type))):
+                        print_custom(custom)
+                elif none:
+                    print_custom(custom)
+            else:
+                if none:
+                    print(bcolors.CYELLOW + bcolors.CBOLD + " ".join(other.adv_data) + bcolors.ENDC)
+            line = ""
+            line += line_part.strip()
         else:
-            other = generate_other_packet(bytes)
-
-        if (ibeacon):
-            if mac:
-                if (filtering(ibeacon, MAC_ADDR, get_bytes_from_filter_str(mac))):
-                    print_ibeacon(ibeacon)
-            elif uuid:
-                if (filtering(ibeacon, UUID, get_bytes_from_filter_str(uuid))):
-                    print_ibeacon(ibeacon)
-            elif major:
-                if (filtering(ibeacon, MAJOR, get_bytes_from_filter_str(major))):
-                    print_ibeacon(ibeacon)
-            elif minor:
-                if (filtering(ibeacon, MINOR, get_bytes_from_filter_str(minor))):
-                    print_ibeacon(ibeacon)
-            elif none:
-                print_ibeacon(ibeacon)
-        elif (custom):
-            if mac:
-                if (filtering(custom, MAC_ADDR, get_bytes_from_filter_str(mac))):
-                    print_custom(custom)
-            elif data:
-                if (filtering(custom, DATA, get_bytes_from_filter_str(data))):
-                    print_custom(custom)
-            elif packet_type:
-                if (filtering(custom, PACKET_TYPE, get_bytes_from_filter_str(packet_type))):
-                    print_custom(custom)
-            elif device_type:
-                if (filtering(custom, DEVICE_TYPE, get_bytes_from_filter_str(device_type))):
-                    print_custom(custom)
-            elif none:
-                print_custom(custom)
-        else:
-            if none:
-                print(bcolors.CYELLOW + bcolors.CBOLD + " ".join(other.adv_data) + bcolors.ENDC)
+            line += " " + line_part.strip()
 
 @click.group()
 def main():
