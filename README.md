@@ -1,8 +1,12 @@
 # Set up
 
 ## Use support for the core Bluetooth layers and protocols to dump BLE traffic
-  - I used custom made bluez-utils-compat-5.50-3-x86_64 with otput as follows:
-    `> 04 3E 2B 02 01 00 01 84 93 45 02 6C FD 1F 02 01 06 1B 16 DE DA 74 84 93 45 02 6C FD BF 63 00 04 02 00 01 FF FF FF FF FF FF FF FF 5E C3 AB`
+  - I used [aur/bluez-utils-compat 5.50-3](http://www.bluez.org/) with otput as follows:
+    ```
+    > 04 3E 2B 02 01 00 01 4A 99 73 A5 43 CA 1F 02 01 06 1B 16 BA 
+  11 73 4A 99 73 A5 43 CA 00 FF FF FF FF FF FF FF FF FF FF FF 
+  FF FF FF 02 BF B8 
+    ```
   - If using other BLE traffic scanner with different output edit function:
     ```
     def get_bytes_from_line(line):
