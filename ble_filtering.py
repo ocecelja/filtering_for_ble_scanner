@@ -131,6 +131,7 @@ class other:
     #---------------------------------------------------
     mac = []
     adv_data = []
+    rssi = []
 
 MAC_ADDR = 1
 UUID = 2
@@ -174,7 +175,8 @@ def generate_custom_packet(bytes):
 
 def generate_other_packet(bytes):
     other.mac = bytes[other.POS_MAC_ADDR_START:other.POS_MAC_ADDR_END]
-    other.adv_data = bytes[other.POS_ADV_DATA_START:]
+    other.adv_data = bytes[other.POS_ADV_DATA_START:-1]
+    other.rssi = bytes[-1:]
     return other
 
 def get_bytes_from_line(line):
@@ -236,6 +238,7 @@ def print_other(other_class):
     print(bcolors.CRED + bcolors.CBOLD + " ".join(other_class.mac) + " " +
         bcolors.CGREEN + bcolors.CBOLD + "O" + " " +
           bcolors.CYELLOW + bcolors.CBOLD + " ".join(other_class.adv_data) + " " +
+          bcolors.CBEIGE + bcolors.CBOLD + " ".join(other_class.rssi) + " " +
           bcolors.ENDC)
 
 @click.command()
@@ -280,6 +283,7 @@ def parse_data(none, mac, uuid, major, minor, data, packet_type, device_type, by
     if (ibeacon):
         if mac:
             if (filtering(ibeacon, MAC_ADDR, get_bytes_from_filter_str(mac))):
+                print(" ".join(bytes))
                 print_ibeacon(ibeacon)
         elif uuid:
             if (filtering(ibeacon, UUID, get_bytes_from_filter_str(uuid))):
@@ -296,6 +300,7 @@ def parse_data(none, mac, uuid, major, minor, data, packet_type, device_type, by
     elif (custom):
         if mac:
             if (filtering(custom, MAC_ADDR, get_bytes_from_filter_str(mac))):
+                print(" ".join(bytes))
                 print_custom(custom)
         elif data:
             if (filtering(custom, DATA, get_bytes_from_filter_str(data))):
@@ -311,6 +316,7 @@ def parse_data(none, mac, uuid, major, minor, data, packet_type, device_type, by
     else:
         if mac:
             if (filtering(other, MAC_ADDR, get_bytes_from_filter_str(mac))):
+                print(" ".join(bytes))
                 print_other(other)
         elif none:
             print_other(other)
