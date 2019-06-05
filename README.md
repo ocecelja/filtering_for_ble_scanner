@@ -19,6 +19,6 @@
     
 # How to use with bluez-utils-compat
 1. run: `sudo hcitool lescan --duplicates`
-2. open new twrminal window
+2. open new terminal window
 3. run to learn how to use filter: `sudo hcidump --raw | python ble_filtering.py filter --help`
 4. run example filter by MAC address: `sudo hcidump --raw | python ble_filtering.py filter -m "86 FB 74 A3 00 CD"`
