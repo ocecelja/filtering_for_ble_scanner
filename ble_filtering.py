@@ -290,7 +290,7 @@ def print_custom_sr(custom_sr_calss):
     string += bcolors.CWHITE + bcolors.CBOLD + " ".join(custom_sr_calss.device_id) + " "
     string += bcolors.CWHITE + bcolors.CBOLD + " ".join(custom_sr_calss.definition_id) + " "
     string += bcolors.CWHITE + bcolors.CBOLD + " ".join(custom_sr_calss.owner_id) + " "
-    string += bcolors.CBLUE + bcolors.CBOLD + " ".join(custom_sr_calss.fw_version) + " "
+    string += bcolors.CVIOLET + bcolors.CBOLD + " ".join(custom_sr_calss.fw_version) + " "
     string += bcolors.CWHITE + bcolors.CBOLD + " ".join(custom_sr_calss.other) + " "
     string += bcolors.CBEIGE + bcolors.CBOLD + " ".join(custom_sr_calss.rssi) + " "
     string += bcolors.ENDC
